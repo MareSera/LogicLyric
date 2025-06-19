@@ -11,3 +11,7 @@ hello
 > 1
 
 ![](https://www.maresera.top/img/tx.png)
+
+Katex 渲染
+
+$$ E=MC^2 $$

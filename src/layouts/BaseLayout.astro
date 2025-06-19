@@ -6,53 +6,75 @@ const { title } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="zh-CN" class="scroll-smooth">
+<html lang="zh-CN" class="scroll-smooth" data-theme="">
 <head>
+    <script>
+    (function() {
+      try {
+        const theme = localStorage.getItem("theme") || "light";
+        document.documentElement.classList.add(theme);
+      } catch (e) {
+        document.documentElement.classList.add("light");
+      }
+    })();
+  </script>
+
   <link 
     rel="stylesheet" 
     href="https://cdn.staticfile.org/lxgw-wenkai-screen-webfont/1.6.0/lxgwwenkaiscreen.css" 
   />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css" />
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="LogicLyric - 记录技术思考与生活感悟">
   <title>{title} | LogicLyric</title>
 
-  <!-- 预加载和异步加载背景 -->
-<link 
-  rel="preload" 
-  href="/background.svg" 
-  as="image" 
-  media="(prefers-color-scheme: light)"
->
-<link 
-  rel="preload" 
-  href="/background-dark.svg" 
-  as="image" 
-  media="(prefers-color-scheme: dark)"
->
 
-<script>
-// 动态加载背景
-window.addEventListener('load', () => {
-  const bg = new Image();
-  bg.src = window.matchMedia('(prefers-color-scheme: dark)').matches 
-    ? '/background-dark.svg' 
-    : '/background.svg';
-    
-  bg.onload = () => {
-    document.body.style.backgroundImage = `url(${bg.src})`;
-  };
-});
-</script>
+  <!-- 预加载背景 -->
+  <link 
+    rel="preload" 
+    href="/background.webp" 
+    as="image" 
+    media="(prefers-color-scheme: light)"
+  >
+  <link 
+    rel="preload" 
+    href="/background-dark.webp" 
+    as="image" 
+    media="(prefers-color-scheme: dark)"
+  >
 
-  
+  <!-- 使用 JavaScript 动态加载背景 -->
+  <script is:inline>
+    const setTheme = (theme) => {
+      const html = document.documentElement;
+      const body = document.body;
+
+      html.classList.toggle('dark', theme === 'dark');
+      html.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+    };
+
+    // 初始化主题
+    (() => {
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      setTheme(theme);
+    })();
+
+    // 切换主题按钮监听（Nav 中）
+    window.__toggleTheme = () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      setTheme(newTheme);
+    };
+  </script>
+
+
   <!-- 图标字体 -->
   <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_4903580_71y8zot9v72.css">
-
-  
-  <!-- 预加载背景图 -->
-  <link rel="preload" href="/background.svg" as="image">
 </head>
 
 <body class="min-h-screen flex flex-col bg-opacity-90">
@@ -91,6 +113,22 @@ window.addEventListener('load', () => {
   </footer>
 
   <style is:global>
+    /* 背景图片动画过渡 */
+    body {
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      transition: background-image 0.3s ease-in-out;
+    }
+
+    [data-theme='light'] body {
+      background-image: url('/background.webp');
+    }
+
+    [data-theme='dark'] body {
+      background-image: url('/background-dark.webp');
+    }
     /* 全局滚动条样式 */
     ::-webkit-scrollbar {
       width: 8px;

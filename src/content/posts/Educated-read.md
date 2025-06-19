@@ -20,3 +20,7 @@ cover: "/img/posts-covers/edu.jpg"  # 封面图路径（可选）
 
 1. 示例文章
 2. 示例文章
+
+Katex 渲染
+
+$$ E=MC^2 $$

@@ -8,19 +8,18 @@ const links = [
   { path: "/about", name: "About", icon: "icon-me" }
 ];
 ---
-
 <nav class="sticky top-0 z-50 border-b border-accent/10 backdrop-blur-lg bg-surface/30 dark:bg-surface/50 transition-colors">
   <div class="max-w-6xl mx-auto px-4">
     <div class="flex items-center justify-between h-16">
       <!-- 左侧品牌 -->
       <a 
         href="/" 
-        class="text-xl font-serif font-bold hover:text-accent transition-colors flex items-center gap-2"
+        class="text-xl font-bold hover:text-accent transition-colors flex items-center gap-2"
       >
         <svg class="w-6 h-6 text-accent md:block hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        LogicLyric
+        Anko Blog
       </a>
 
       <!-- 移动端菜单按钮 -->
@@ -128,7 +127,7 @@ const links = [
   }
 </style>
 
-<script>
+<script is:inline>
   // 移动端菜单切换
   const mobileMenu = document.getElementById('mobile-menu');
   const mobileNav = document.getElementById('mobile-nav');
@@ -149,11 +148,16 @@ const links = [
     });
   });
 
-  // 初始化主题（保持原有）
   const initTheme = () => {
     const savedTheme = localStorage.getItem('theme') || 
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    // 替换点击事件处理器
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      if (window.__toggleTheme) {
+        window.__toggleTheme();
+      }
+    });
+
   };
 
   document.getElementById('theme-toggle').addEventListener('click', () => {
@@ -168,9 +172,5 @@ const links = [
   });
 
   initTheme();
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    if (!localStorage.getItem('theme')) {
-      document.documentElement.classList.toggle('dark', e.matches);
-    }
-  });
 </script>
+
